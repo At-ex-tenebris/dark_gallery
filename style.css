@@ -1,0 +1,493 @@
+/* =============================================
+   MYSTIC ALBUM — style.css
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* --- Variables --- */
+:root {
+    --bg:           #0b0b10;
+    --bg-grad-a:    rgba(20, 10, 60, 0.35);
+    --bg-grad-b:    rgba(60, 10, 20, 0.25);
+    --glass:        rgba(18, 18, 28, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text:         #e8e0d0;
+    --text-muted:   #7a7090;
+
+    /* Card layout — 2× bigger: 190 → 380px */
+    --card-w:       380px;
+    --gap:          24px;
+    --cols:         5;
+
+    /* Rarity palette */
+    --c-common:     #8a8a8a;
+    --c-rare:       #3a9ad9;
+    --c-very-rare:  #d4a017;
+    --c-epic:       #9b30e8;
+    --c-legendary:  #ff6ec7;
+}
+
+/* --- Reset --- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Crimson Text', Georgia, serif;
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+        radial-gradient(ellipse 60% 40% at 15% 10%, var(--bg-grad-a) 0%, transparent 100%),
+        radial-gradient(ellipse 50% 35% at 85% 85%, var(--bg-grad-b) 0%, transparent 100%);
+    overflow-x: hidden;
+}
+
+/* ---- Header ---- */
+.site-header {
+    text-align: center;
+    padding: 52px 20px 36px;
+    position: relative;
+}
+.site-header::after {
+    content: '';
+    display: block;
+    width: 220px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,180,255,0.25), transparent);
+    margin: 20px auto 0;
+}
+.site-header h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    letter-spacing: 0.22em;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(160,120,255,0.4), 0 0 60px rgba(160,120,255,0.15);
+}
+.site-header p {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* ---- Gallery Grid ---- */
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), var(--card-w));
+    gap: var(--gap);
+    padding: 32px 5% 60px;
+    max-width: 2200px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+@media (max-width: 2100px) { :root { --cols: 4; } }
+@media (max-width: 1700px) { :root { --cols: 3; } }
+@media (max-width: 1280px) { :root { --cols: 2; } }
+@media (max-width: 860px)  { :root { --cols: 1; --card-w: 340px; } }
+
+/* ---- Card Base ---- */
+.card {
+    width: var(--card-w);
+    aspect-ratio: 3 / 4;
+    border-radius: 14px;
+    overflow: visible;        /* allow glow/border pseudo-elements to bleed */
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    background: var(--glass);
+    /* Thick border — 3px default */
+    border: 3px solid var(--glass-border);
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+    will-change: transform;
+    /* Clip inner content but let pseudo-elements overflow */
+    clip-path: none;
+}
+
+/* Clip the photo/content inside the rounded corners */
+.card-inner-clip {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 11px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+/* Photo */
+.card-photo-wrap {
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+}
+.card-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+    will-change: transform;
+}
+.card:hover .card-photo {
+    transform: scale(1.06);
+}
+
+/* Title bar — no rarity badge anymore */
+.card-title-bar {
+    flex-shrink: 0;
+    padding: 12px 14px 11px;
+    background: rgba(8, 8, 14, 0.9);
+    border-top: 2px solid rgba(255,255,255,0.07);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+.card-title-bar span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+    line-height: 1.2;
+    display: block;
+}
+
+/* =============================================
+   RARITY STYLES  (border + glow only, no badge)
+   ============================================= */
+
+/* -- COMMON -- */
+.rarity-common { border-color: rgba(138,138,138,0.3); }
+.rarity-common:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.55); }
+
+/* -- RARE -- */
+.rarity-rare { border-color: rgba(58,154,217,0.5); }
+.rarity-rare:hover {
+    box-shadow: 0 12px 35px rgba(0,0,0,0.55), 0 0 28px rgba(58,154,217,0.35);
+    border-color: rgba(58,154,217,0.85);
+}
+.rarity-rare .card-inner-clip::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+        transparent 30%,
+        rgba(100,180,255,0.12) 48%,
+        rgba(200,230,255,0.2) 52%,
+        transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0s;
+    pointer-events: none;
+    z-index: 5;
+}
+.rarity-rare:hover .card-inner-clip::after {
+    transform: translateX(120%);
+    transition: transform 0.55s ease;
+}
+
+/* -- VERY RARE -- */
+.rarity-very-rare { border-color: rgba(212,160,23,0.55); }
+.rarity-very-rare:hover {
+    border-color: rgba(212,160,23,1);
+    animation: gold-glow 1.4s ease-in-out infinite alternate;
+}
+.rarity-very-rare .card-inner-clip::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+        transparent 25%,
+        rgba(255,220,80,0.08) 42%,
+        rgba(255,255,180,0.25) 50%,
+        rgba(255,180,50,0.08) 58%,
+        transparent 75%);
+    transform: translateX(-120%);
+    transition: transform 0s;
+    pointer-events: none;
+    z-index: 5;
+}
+.rarity-very-rare:hover .card-inner-clip::after {
+    transform: translateX(120%);
+    transition: transform 0.6s ease;
+}
+@keyframes gold-glow {
+    from { box-shadow: 0 12px 35px rgba(0,0,0,0.55), 0 0 25px rgba(212,160,23,0.35); }
+    to   { box-shadow: 0 12px 45px rgba(0,0,0,0.55), 0 0 55px rgba(212,160,23,0.65), 0 0 90px rgba(212,160,23,0.25); }
+}
+
+/* -- EPIC -- */
+.rarity-epic {
+    border-color: rgba(155,48,232,0.6);
+    animation: epic-idle 2.5s ease-in-out infinite alternate;
+}
+@keyframes epic-idle {
+    from { box-shadow: 0 0 16px rgba(155,48,232,0.3), inset 0 0 14px rgba(155,48,232,0.06); }
+    to   { box-shadow: 0 0 36px rgba(155,48,232,0.6), inset 0 0 22px rgba(155,48,232,0.12); }
+}
+.rarity-epic:hover {
+    border-color: rgba(155,48,232,0.95);
+    animation: none;
+    box-shadow: 0 14px 50px rgba(0,0,0,0.65),
+                0 0 60px rgba(155,48,232,0.65),
+                inset 0 0 30px rgba(155,48,232,0.14);
+}
+/* Flame behind card */
+.rarity-epic::before {
+    content: '';
+    position: absolute;
+    bottom: -18px;
+    left: 5%;
+    width: 90%;
+    height: 36px;
+    background: radial-gradient(ellipse at center,
+        rgba(155,48,232,0.6) 0%,
+        rgba(255,80,255,0.28) 45%,
+        transparent 75%);
+    filter: blur(12px);
+    z-index: -1;
+    pointer-events: none;
+    animation: flame 2s ease-in-out infinite alternate;
+}
+@keyframes flame {
+    from { opacity: 0.55; transform: scaleX(0.88) translateY(0); }
+    to   { opacity: 1;    transform: scaleX(1.12) translateY(-4px); }
+}
+
+/* -- LEGENDARY -- */
+.rarity-legendary {
+    border: none;
+    animation: legendary-hue 4s linear infinite;
+    position: relative;
+}
+.rarity-legendary::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 16px;
+    background: linear-gradient(45deg,
+        #ff0080, #ff8c00, #ffe000,
+        #00c840, #00bfff, #a020f0, #ff0080);
+    background-size: 300% 300%;
+    animation: rainbow-border 3s linear infinite;
+    z-index: -1;
+    filter: blur(1.5px) brightness(1.25);
+}
+@keyframes rainbow-border {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+@keyframes legendary-hue {
+    0%   { filter: hue-rotate(0deg) brightness(1); }
+    50%  { filter: hue-rotate(180deg) brightness(1.05); }
+    100% { filter: hue-rotate(360deg) brightness(1); }
+}
+.rarity-legendary:hover { transform: translateY(-10px) scale(1.025); }
+
+/* =============================================
+   MODAL
+   ============================================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 3, 10, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* 2× bigger modal: 320 → 640px */
+.modal-scene {
+    position: relative;
+    width: min(640px, 85vw);
+    aspect-ratio: 3 / 4;
+    perspective: 1600px;
+    z-index: 10; /* Убеждаемся, что сцена карточки находится поверх частиц */
+}
+
+/* The actual 3D card */
+.modal-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: rgba(10, 10, 18, 0.95);
+    /* Thick modal border — 3px */
+    border: 3px solid rgba(255,255,255,0.18);
+    transform-style: preserve-3d;
+    transition: transform 0.08s linear;
+    will-change: transform;
+    cursor: pointer; /* Указываем, что карточка кликабельна для закрытия */
+}
+
+.modal-photo-wrap {
+    flex: 0 0 64%;
+    position: relative;
+    overflow: hidden;
+}
+.modal-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.modal-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0%, transparent 65%);
+}
+
+/* Description — bottom third */
+.modal-desc-panel {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 28px 26px;
+    position: relative;
+    z-index: 2;
+    border-top: 2px solid rgba(255,255,255,0.07);
+    background: rgba(6, 5, 15, 0.9);
+}
+.modal-card-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.35rem, 4vw, 1.65rem);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 12px;
+    padding-right: 140px; /* Предотвращаем наложение на шильдик редкости */
+}
+.modal-rarity-label {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 0;
+}
+.modal-desc-text {
+    font-family: 'Crimson Text', serif;
+    font-size: clamp(1.15rem, 3.5vw, 1.3rem);
+    line-height: 1.65;
+    color: rgba(220,215,240,0.85);
+    font-style: italic;
+}
+
+/* Modal rarity border variants */
+.modal-card.rarity-common    { border-color: rgba(138,138,138,0.3); }
+.modal-card.rarity-rare      { border-color: rgba(58,154,217,0.6);   box-shadow: 0 0 40px rgba(58,154,217,0.25); }
+.modal-card.rarity-very-rare { border-color: rgba(212,160,23,0.7);   box-shadow: 0 0 55px rgba(212,160,23,0.35); }
+.modal-card.rarity-epic      { border-color: rgba(155,48,232,0.75);  box-shadow: 0 0 70px rgba(155,48,232,0.5), 0 0 130px rgba(155,48,232,0.18); }
+.modal-card.rarity-legendary {
+    border: none;
+    box-shadow: 0 0 80px rgba(255,110,199,0.45), 0 0 150px rgba(100,200,255,0.22);
+}
+.modal-card.rarity-legendary::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 18px;
+    background: linear-gradient(45deg,
+        #ff0080, #ff8c00, #ffe000,
+        #00c840, #00bfff, #a020f0, #ff0080);
+    background-size: 400% 400%;
+    animation: rainbow-border 2.5s linear infinite;
+    z-index: -1;
+    filter: brightness(1.35);
+}
+
+/* Modal label badge colors */
+.modal-rarity-label.rarity-common    { background: rgba(138,138,138,0.15); color: var(--c-common);    border: 1px solid rgba(138,138,138,0.3); }
+.modal-rarity-label.rarity-rare      { background: rgba(58,154,217,0.15);  color: var(--c-rare);      border: 1px solid rgba(58,154,217,0.4);  }
+.modal-rarity-label.rarity-very-rare { background: rgba(212,160,23,0.15);  color: var(--c-very-rare); border: 1px solid rgba(212,160,23,0.45); }
+.modal-rarity-label.rarity-epic      { background: rgba(155,48,232,0.15);  color: var(--c-epic);      border: 1px solid rgba(155,48,232,0.45); }
+.modal-rarity-label.rarity-legendary { background: rgba(255,110,199,0.12); color: var(--c-legendary); border: 1px solid rgba(255,110,199,0.4); }
+
+/* =============================================
+   PARTICLES
+   ============================================= */
+.particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1; /* Находится позади modal-scene (z-index: 10), но поверх фона modal-overlay */
+    opacity: 0;
+    transform-origin: center;
+}
+
+/* =============================================
+   LOADING STATE
+   ============================================= */
+.loading-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 60px 0;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+}
+
+/* =============================================
+   MOBILE RESPONSIVENESS (MODAL)
+   ============================================= */
+@media (max-width: 860px) {
+    .modal-desc-panel {
+        padding: 16px 20px 18px; /* Более компактные отступы */
+    }
+    .modal-card-title {
+        font-size: 0.825rem; /* В 2 раза меньше десктопного (~1.65rem) */
+        margin-bottom: 8px;
+        padding-right: 90px; /* Скорректированный отступ под плашку редкости */
+    }
+    .modal-rarity-label {
+        top: 16px;
+        right: 20px;
+        font-size: 0.6rem;
+        padding: 3px 8px;
+    }
+    .modal-desc-text {
+        font-size: 0.65rem; /* В 2 раза меньше десктопного (~1.3rem) */
+        line-height: 1.45;
+    }
+}
+
+/* =============================================
+   REDUCED MOTION
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+    .rarity-epic, .rarity-epic::before,
+    .rarity-legendary, .rarity-legendary::before,
+    .rarity-very-rare { animation: none !important; }
+    .card, .card-photo, .modal-card { transition: none !important; }
+}
